@@ -8,4 +8,5 @@ libraryDependencies ++= Seq(
   "com.github.pathikrit" %% "better-files" % "3.8.0",
   "com.nrinaudo" %% "kantan.csv" % "0.6.0",
   "com.nrinaudo" %% "kantan.csv-generic" % "0.6.0",
+  "org.scalatest" %% "scalatest" % "3.1.0" % "test",
 )

@@ -1,6 +1,6 @@
 package com.tmatsuura
 
-import better.files.File
+import java.io.File
 import kantan.csv._
 import kantan.csv.ops._
 
@@ -28,8 +28,23 @@ object BotChecker {
   private val appearAnywhere = (x: String) =>
     (y: String) => y.toLowerCase contains x.toLowerCase
 
-  def from(filePath: String): BotChecker = {
-    val checkers = File(filePath).toJava
+  def from(file: File): BotChecker = {
+    val checkers = file
+      .asCsvReader[KnownBot](rfc.withCellSeparator('|'))
+      .collect { case Right(a) => a }
+      .filter(p => p.isActive == 1)
+      .map(b =>
+        b.startOfString match {
+          case 1 => occurAtStart(b.ua)
+          case 0 => appearAnywhere(b.ua)
+        },
+      )
+      .toSeq
+    new BotChecker(checkers)
+  }
+
+  def from(csv: String): BotChecker = {
+    val checkers = csv
       .asCsvReader[KnownBot](rfc.withCellSeparator('|'))
       .collect { case Right(a) => a }
       .filter(p => p.isActive == 1)
